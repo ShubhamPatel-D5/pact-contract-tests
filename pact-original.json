@@ -1,0 +1,126 @@
+{
+  "consumer": {
+    "name": "SF-Consumer"
+  },
+  "interactions": [
+    {
+      "description": "A POST request to BulkUsers with invalid token",
+      "providerStates": [
+        {
+          "name": "Invalid authentication token provided"
+        }
+      ],
+      "request": {
+        "body": [],
+        "headers": {
+          "Authorization": "Bearer invalid-token",
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/BulkUsers"
+      },
+      "response": {
+        "status": 401
+      }
+    },
+    {
+      "description": "A POST request to sync users via BulkUsers API",
+      "providerStates": [
+        {
+          "name": "Valid Windows users exist in VAIS"
+        }
+      ],
+      "request": {
+        "body": [
+          {
+            "displayName": "TestUser",
+            "identityProviders": [
+              {
+                "provider": "windows",
+                "providerId": "vms\\administrator"
+              }
+            ],
+            "isAccountDisabled": false,
+            "subject": null
+          }
+        ],
+        "headers": {
+          "Authorization": "Bearer valid-token-from-SF",
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/BulkUsers"
+      },
+      "response": {
+        "body": [
+          {
+            "displayName": "TestUser",
+            "identityProviders": [
+              {
+                "provider": "windows",
+                "providerId": "vms\\administrator"
+              }
+            ],
+            "isAccountDisabled": false,
+            "subject": "user-subject-id-123"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "A POST request to BulkUsers with invalid Windows user",
+      "providerStates": [
+        {
+          "name": "Windows user does not exist in domain"
+        }
+      ],
+      "request": {
+        "body": [
+          {
+            "displayName": "InvalidUser",
+            "identityProviders": [
+              {
+                "provider": "windows",
+                "providerId": "invalid-user"
+              }
+            ],
+            "isAccountDisabled": false,
+            "subject": null
+          }
+        ],
+        "headers": {
+          "Authorization": "Bearer valid-token-from-SF",
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/BulkUsers"
+      },
+      "response": {
+        "body": {
+          "error": "InvalidWindowsUserName",
+          "message": "Invalid UserName. User 'invalid-user' does not exist in Windows."
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 400
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.0",
+      "models": "1.0.4"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "VAIS-Producer"
+  }
+}

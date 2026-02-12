@@ -1,0 +1,26 @@
+{
+  "brokerUrl": "http://puvsfpactserver.tiger01-dev.ba.lab.local:9292",
+  "consumer": "SF-Consumer",
+  "provider": "VAIS-Producer",
+  "authentication": {
+    "note": "Configure one of the following authentication methods if your broker requires it:",
+    "bearerToken": {
+      "envVar": "PACT_BROKER_TOKEN",
+      "description": "Set this environment variable with your broker bearer token"
+    },
+    "basicAuth": {
+      "usernameEnvVar": "PACT_BROKER_USERNAME",
+      "passwordEnvVar": "PACT_BROKER_PASSWORD",
+      "description": "Set these environment variables for basic authentication"
+    }
+  },
+  "versioning": {
+    "consumerVersionEnvVars": ["BUILD_NUMBER", "GITHUB_SHA"],
+    "providerVersionEnvVars": ["BUILD_NUMBER", "GITHUB_SHA"],
+    "defaultVersionFormat": "1.0.yyyyMMddHHmmss"
+  },
+  "tagging": {
+    "defaultBranch": "main",
+    "branchEnvVar": "BRANCH_NAME"
+  }
+}
