@@ -7,16 +7,15 @@ on:
     branches: [main]
 
 env:
-  PACT_BROKER_BASE_URL: http://puvsfpactserver.tiger01-dev.ba.lab.local:9292
-  PACT_BROKER_IP: 10.167.179.131  # IP address of your Pact Broker server
-  # PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}  # Uncomment if auth required
+  PACT_BROKER_BASE_URL: https://varian-c836f1db.pactflow.io
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}  # Add your PactFlow API token as a GitHub secret
   # PACT_BROKER_USERNAME: ${{ secrets.PACT_BROKER_USERNAME }}
   # PACT_BROKER_PASSWORD: ${{ secrets.PACT_BROKER_PASSWORD }}
 
 jobs:
   consumer-tests:
     name: Consumer Contract Tests
-    runs-on: self-hosted  # Use self-hosted runner inside corporate network
+    runs-on: windows-latest  # Use GitHub-hosted runner
     
     steps:
       - name: Checkout code
@@ -49,18 +48,16 @@ jobs:
           BUILD_NUMBER: ${{ github.sha }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          .\publish-pact.ps1 -ConsumerVersion "$env:BUILD_NUMBER"
+          .\publish-pact.ps1 -ConsumerVersion "$env:BUILD_NUMBER" -Token "$env:PACT_BROKER_TOKEN"
 
   provider-verification:
     name: Provider Verification Tests
-    runs-on: self-hosted  # Use self-hosted runner inside corporate network
+    runs-on: windows-latest  # Use GitHub-hosted runner
     needs: consumer-tests
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      # No need to add hosts file - already configured on self-hosted runner
       
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -90,15 +87,13 @@ jobs:
 
   can-i-deploy:
     name: Can I Deploy Check
-    runs-on: self-hosted  # Use self-hosted runner inside corporate network
+    runs-on: windows-latest
     needs: [consumer-tests, provider-verification]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      # No need to add hosts file - already configured on self-hosted runner
       
       - name: Install Pact CLI (via Chocolatey)
         run: |
