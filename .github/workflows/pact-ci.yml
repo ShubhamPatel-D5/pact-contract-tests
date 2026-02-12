@@ -19,10 +19,10 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup .NET 8
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
       
@@ -35,7 +35,7 @@ jobs:
         run: dotnet test --logger "console;verbosity=detailed" --no-restore
       
       - name: Upload Pact Files as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pacts
           path: Consumer/pacts/*.json
@@ -55,15 +55,15 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup .NET 8
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
       
       - name: Download Pact Files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pacts
           path: Consumer/pacts
@@ -91,7 +91,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Install Pact CLI (via Chocolatey)
         run: |
