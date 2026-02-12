@@ -16,17 +16,13 @@ env:
 jobs:
   consumer-tests:
     name: Consumer Contract Tests
-    runs-on: windows-latest
+    runs-on: self-hosted  # Use self-hosted runner inside corporate network
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Add Pact Broker to hosts file
-        run: |
-          Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n$env:PACT_BROKER_IP puvsfpactserver.tiger01-dev.ba.lab.local" -Force
-          Write-Host "Hosts file updated. Contents:"
-          Get-Content "C:\Windows\System32\drivers\etc\hosts" | Select-Object -Last 5
+      # No need to add hosts file - already configured on self-hosted runner
       
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -57,18 +53,14 @@ jobs:
 
   provider-verification:
     name: Provider Verification Tests
-    runs-on: windows-latest
+    runs-on: self-hosted  # Use self-hosted runner inside corporate network
     needs: consumer-tests
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Add Pact Broker to hosts file
-        run: |
-          Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n$env:PACT_BROKER_IP puvsfpactserver.tiger01-dev.ba.lab.local" -Force
-          Write-Host "Hosts file updated. Contents:"
-          Get-Content "C:\Windows\System32\drivers\etc\hosts" | Select-Object -Last 5
+      # No need to add hosts file - already configured on self-hosted runner
       
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -98,7 +90,7 @@ jobs:
 
   can-i-deploy:
     name: Can I Deploy Check
-    runs-on: windows-latest
+    runs-on: self-hosted  # Use self-hosted runner inside corporate network
     needs: [consumer-tests, provider-verification]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     
@@ -106,11 +98,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Add Pact Broker to hosts file
-        run: |
-          Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n$env:PACT_BROKER_IP puvsfpactserver.tiger01-dev.ba.lab.local" -Force
-          Write-Host "Hosts file updated. Contents:"
-          Get-Content "C:\Windows\System32\drivers\etc\hosts" | Select-Object -Last 5
+      # No need to add hosts file - already configured on self-hosted runner
       
       - name: Install Pact CLI (via Chocolatey)
         run: |
